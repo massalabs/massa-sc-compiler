@@ -1,0 +1,38 @@
+{
+  "name": "@massalabs/massa-sc-compiler",
+  "version": "0.0.2",
+  "description": "",
+  "main": "dist/compiler.js",
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "tsc",
+    "prettier": "prettier '**/src/**/*.ts' --check && as-prettier --check assembly",
+    "prettier:fix": "prettier '**/src/**/*.ts' --write && as-prettier --write assembly",
+    "lint": "",
+    "lint:fix": "",
+    "fmt": "npm run prettier:fix && npm run lint:fix",
+    "fmt:check": "npm run prettier && npm run lint",
+    "prepare": "husky install"
+  },
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "bin": {
+    "massa-as-compile": "dist/compiler.js"
+  },
+  "dependencies": {
+    "assemblyscript": "^0.25.2"
+  },
+  "devDependencies": {
+    "@massalabs/prettier-config-as": "^0.0.2",
+    "husky": "^8.0.3",
+    "prettier": "^2.8.1",
+    "rimraf": "^3.0.2",
+    "ts-node": "^10.9.1",
+    "tslib": "^2.4.0",
+    "typescript": "^4.8.4"
+  }
+}

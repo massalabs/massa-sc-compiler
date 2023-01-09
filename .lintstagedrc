@@ -1,0 +1,5 @@
+{
+  "*.{js,ts,jsx,tsx,json,cjs, ts}": [
+    "npm run fmt:check"
+  ]
+}
