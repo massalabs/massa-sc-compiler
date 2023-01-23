@@ -1,6 +1,6 @@
 # Massa smart-contract Compiler
 
-This package can compile all the smart contracts in `assembly/contracts`, see Usage section.
+**Compile you smart contracts!**
 
 ## Install dependencies
 
@@ -38,4 +38,18 @@ When you have installed the package, you can do:
 
 ```sh
 npx massa-as-compile
+```
+
+This will compile all the smart contracts in `assembly/contracts`.
+
+```sh
+npx massa-as-compile -r
+```
+
+This will compile all the smart contracts in `assembly/contracts` and subdirectories.
+
+To see the help:
+
+```sh
+npx massa-as-compile --help
 ```
