@@ -95,7 +95,7 @@ export async function compileAll() {
     .option("subdirectories", {
       alias: "r",
       type: "boolean",
-      description: "Compile files in assembly/contracts and subdirectories",
+      description: "Compile files in assembly/contracts and its subdirectories",
     })
     .parseAsync();
 })();
