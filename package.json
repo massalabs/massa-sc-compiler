@@ -1,11 +1,11 @@
 {
   "name": "@massalabs/massa-sc-compiler",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "",
   "main": "dist/compiler.js",
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "tsc",
+    "build": "tsc -d",
     "prettier": "prettier '**/src/**/*.ts' --check && as-prettier --check assembly",
     "prettier:fix": "prettier '**/src/**/*.ts' --write && as-prettier --write assembly",
     "lint": "",
@@ -24,10 +24,12 @@
     "massa-as-compile": "dist/compiler.js"
   },
   "dependencies": {
-    "assemblyscript": "^0.25.2"
+    "assemblyscript": "^0.25.2",
+    "yargs": "^17.6.2"
   },
   "devDependencies": {
     "@massalabs/prettier-config-as": "^0.0.2",
+    "@types/yargs": "^17.0.20",
     "husky": "^8.0.3",
     "prettier": "^2.8.1",
     "rimraf": "^3.0.2",
