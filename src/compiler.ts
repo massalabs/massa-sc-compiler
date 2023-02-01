@@ -11,10 +11,10 @@ async function compile(argv: string[], options: object = {}): Promise<boolean> {
   if (error) {
     console.log("Compilation failed: " + error.message);
     console.log("stderr " + stderr.toString());
-    return false;
+    return Promise.resolve(false);
   } else {
     console.log(stdout.toString());
-    return true;
+    return Promise.resolve(true);
   }
 }
 
@@ -43,7 +43,7 @@ function searchDirectory(dir: string, fileList: string[] = []): string[] {
     }
   });
   return fileList;
-};
+}
 
 export async function compileAll(subdirectories: boolean): Promise<boolean> {
   let files;
