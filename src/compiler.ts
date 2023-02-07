@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { readFileSync, readdirSync, statSync } from "fs";
-import { join } from "path";
+import { join, basename } from "path";
 import asc from "assemblyscript/dist/asc.js";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
@@ -46,7 +46,7 @@ function searchDirectory(dir: string, fileList: string[] = []): string[] {
 }
 
 export async function compileAll(subdirectories: boolean): Promise<boolean> {
-  let files;
+  let files: string[];
   if (subdirectories) {
     files = searchDirectory("./assembly/contracts");
   } else {
@@ -61,18 +61,19 @@ export async function compileAll(subdirectories: boolean): Promise<boolean> {
 
   console.log(`${files.length} files to compile`);
 
-  return files.reduce(async (isOk, contract): Promise<boolean> => {
-    return Promise.resolve(
-      (await isOk) &&
-        (await compile([
-          "-o",
-          join("build", contract.replace(".ts", ".wasm")),
-          "-t",
-          join("build", contract.replace(".ts", ".wat")),
-          contract,
-        ]))
-    );
-  }, Promise.resolve(true));
+  const res = await Promise.all(
+    files.map((file) =>
+      compile([
+        "-o",
+        join("build", basename(file.replace(".ts", ".wasm"))),
+        "-t",
+        join("build", basename(file.replace(".ts", ".wat"))),
+        file,
+      ])
+    )
+  );
+
+  return res.every((isOk) => isOk);
 }
 
 (async () => {
@@ -82,8 +83,7 @@ export async function compileAll(subdirectories: boolean): Promise<boolean> {
       "Compile files in assembly/contracts",
       () => {},
       async (argv) => {
-        let result;
-        result = await compileAll(argv.subdirectories as boolean);
+        const result = await compileAll(argv.subdirectories as boolean);
         process.exit(result ? 0 : 1);
       }
     )
