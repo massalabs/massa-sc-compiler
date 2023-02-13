@@ -1,16 +1,16 @@
 #!/usr/bin/env node
-import { readFileSync, readdirSync, statSync } from "fs";
-import { join, basename } from "path";
-import asc from "assemblyscript/dist/asc.js";
-import yargs from "yargs";
-import { hideBin } from "yargs/helpers";
+import { readFileSync, readdirSync, statSync } from 'fs';
+import { join, basename } from 'path';
+import asc from 'assemblyscript/dist/asc.js';
+import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers';
 
 async function compile(argv: string[], options: object = {}): Promise<boolean> {
   const { error, stdout, stderr } = await asc.main(argv, options);
-  console.info("contract to compile " + argv[argv.length - 1]);
+  console.info('contract to compile ' + argv[argv.length - 1]);
   if (error) {
-    console.log("Compilation failed: " + error.message);
-    console.log("stderr " + stderr.toString());
+    console.log('Compilation failed: ' + error.message);
+    console.log('stderr ' + stderr.toString());
     return Promise.resolve(false);
   } else {
     console.log(stdout.toString());
@@ -18,7 +18,7 @@ async function compile(argv: string[], options: object = {}): Promise<boolean> {
   }
 }
 
-const dirToCompile = "./assembly/contracts";
+const dirToCompile = './assembly/contracts';
 
 /**
  * sort the file: compile deployer contract after
@@ -27,7 +27,7 @@ const dirToCompile = "./assembly/contracts";
  */
 function sortFiles(files: Array<string>): Array<string> {
   return files.sort((contract) => {
-    return readFileSync(contract, "utf-8").includes("fileToByteArray(")
+    return readFileSync(contract, 'utf-8').includes('fileToByteArray(')
       ? 1
       : -1;
   });
@@ -36,9 +36,9 @@ function sortFiles(files: Array<string>): Array<string> {
 function searchDirectory(dir: string, fileList: string[] = []): string[] {
   readdirSync(dir).forEach((file) => {
     const filePath = join(dir, file);
-    if (statSync(filePath).isDirectory() && file !== "__tests__") {
+    if (statSync(filePath).isDirectory() && file !== '__tests__') {
       fileList = searchDirectory(filePath, fileList);
-    } else if (filePath.endsWith(".ts")) {
+    } else if (filePath.endsWith('.ts')) {
       fileList.push(filePath);
     }
   });
@@ -48,7 +48,7 @@ function searchDirectory(dir: string, fileList: string[] = []): string[] {
 export async function compileAll(subdirectories: boolean): Promise<boolean> {
   let files: string[];
   if (subdirectories) {
-    files = searchDirectory("./assembly/contracts");
+    files = searchDirectory('./assembly/contracts');
   } else {
     files = readdirSync(dirToCompile).map((file) => {
       return join(dirToCompile, file);
@@ -56,7 +56,7 @@ export async function compileAll(subdirectories: boolean): Promise<boolean> {
   }
 
   // keep only files ending with `.ts`
-  files = files.filter((file) => file.endsWith(".ts"));
+  files = files.filter((file) => file.endsWith('.ts'));
   files = sortFiles(files);
 
   console.log(`${files.length} files to compile`);
@@ -64,13 +64,13 @@ export async function compileAll(subdirectories: boolean): Promise<boolean> {
   const res = await Promise.all(
     files.map((file) =>
       compile([
-        "-o",
-        join("build", basename(file.replace(".ts", ".wasm"))),
-        "-t",
-        join("build", basename(file.replace(".ts", ".wat"))),
+        '-o',
+        join('build', basename(file.replace('.ts', '.wasm'))),
+        '-t',
+        join('build', basename(file.replace('.ts', '.wat'))),
         file,
-      ])
-    )
+      ]),
+    ),
   );
 
   return res.every((isOk) => isOk);
@@ -79,18 +79,18 @@ export async function compileAll(subdirectories: boolean): Promise<boolean> {
 (async () => {
   await yargs(hideBin(process.argv))
     .command(
-      "*",
-      "Compile files in assembly/contracts",
-      () => {},
+      '*',
+      'Compile files in assembly/contracts',
+      undefined,
       async (argv) => {
         const result = await compileAll(argv.subdirectories as boolean);
         process.exit(result ? 0 : 1);
-      }
+      },
     )
-    .option("subdirectories", {
-      alias: "r",
-      type: "boolean",
-      description: "Compile files in assembly/contracts and its subdirectories",
+    .option('subdirectories', {
+      alias: 'r',
+      type: 'boolean',
+      description: 'Compile files in assembly/contracts and its subdirectories',
     })
     .parseAsync();
 })();
