@@ -25,11 +25,11 @@
   },
   "dependencies": {
     "assemblyscript": "^0.25.2",
-    "yargs": "^17.6.2"
+    "yargs": "^17.7.1"
   },
   "devDependencies": {
-    "@massalabs/prettier-config-as": "^0.0.2",
     "@massalabs/eslint-config": "^0.0.9",
+    "@massalabs/prettier-config-as": "^0.0.2",
     "@types/yargs": "^17.0.20",
     "husky": "^8.0.3",
     "lint-staged": "^13.1.0",
@@ -40,5 +40,4 @@
     "typescript": "^4.8.4"
   },
   "prettier": "@massalabs/prettier-config-as"
-
 }
