@@ -78,15 +78,10 @@ export async function compileAll(subdirectories: boolean): Promise<boolean> {
 
 (async () => {
   await yargs(hideBin(process.argv))
-    .command(
-      '*',
-      'Compile files in assembly/contracts',
-      undefined,
-      async (argv) => {
-        const result = await compileAll(argv.subdirectories as boolean);
-        process.exit(result ? 0 : 1);
-      },
-    )
+    .command('*', 'Compile files in assembly/contracts', {}, async (argv) => {
+      const result = await compileAll(argv.subdirectories as boolean);
+      process.exit(result ? 0 : 1);
+    })
     .option('subdirectories', {
       alias: 'r',
       type: 'boolean',
