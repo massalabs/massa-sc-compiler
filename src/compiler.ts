@@ -65,9 +65,21 @@ export async function compileAll(subdirectories: boolean): Promise<boolean> {
     files.map((file) =>
       compile([
         '-o',
-        join('build', basename(file.replace('.ts', '.wasm'))),
+        join(
+          'build',
+          basename(file.replace('.ts', '.wasm')).replace(
+            'assembly/contracts/',
+            '',
+          ),
+        ),
         '-t',
-        join('build', basename(file.replace('.ts', '.wat'))),
+        join(
+          'build',
+          basename(file.replace('.ts', '.wat')).replace(
+            'assembly/contracts/',
+            '',
+          ),
+        ),
         file,
       ]),
     ),
