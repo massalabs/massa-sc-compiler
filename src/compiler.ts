@@ -57,9 +57,7 @@ export async function compileAll(subdirectories: boolean): Promise<boolean> {
 
   // keep only files ending with `.ts`
   files = files.filter((file) => file.endsWith('.ts'));
-  files = sortFiles(files).map((file) =>
-    file.replace('/assembly/contracts', ''),
-  );
+  files = sortFiles(files);
 
   console.log(`${files.length} files to compile`);
 
@@ -67,9 +65,21 @@ export async function compileAll(subdirectories: boolean): Promise<boolean> {
     files.map((file) =>
       compile([
         '-o',
-        join('build', basename(file.replace('.ts', '.wasm'))),
+        join(
+          'build',
+          basename(file.replace('.ts', '.wasm')).replace(
+            'assembly/contracts/',
+            '',
+          ),
+        ),
         '-t',
-        join('build', basename(file.replace('.ts', '.wat'))),
+        join(
+          'build',
+          basename(file.replace('.ts', '.wat')).replace(
+            'assembly/contracts/',
+            '',
+          ),
+        ),
         file,
       ]),
     ),
