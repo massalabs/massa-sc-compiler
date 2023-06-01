@@ -57,7 +57,7 @@ export async function compileAll(subdirectories: boolean): Promise<boolean> {
 
   // keep only files ending with `.ts`
   files = files.filter((file) => file.endsWith('.ts'));
-  files = sortFiles(files);
+  files = sortFiles(files).map(file => file.replace('/assembly/contracts', ''));
 
   console.log(`${files.length} files to compile`);
 
