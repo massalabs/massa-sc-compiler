@@ -18,11 +18,17 @@ async function compile(argv: string[], options: object = {}): Promise<boolean> {
 
     // Merge command-line options with asconfig options
     options = { ...targetOpts, ...options };
+
+    // Creating protobuf files if it's in release mode
+    if (process.env['ASC_ENV'] === 'release') {
+      argv.push('--transform');
+      argv.push('@massalabs/as-transformer');
+    }
   } else {
     console.log('asconfig.json not found, using default options');
   }
   const { error, stdout, stderr } = await asc.main(argv, options);
-  console.info('contract to compile ' + argv[argv.length - 1]);
+  console.info('contract to compile ' + argv[argv.length - 3]);
   if (error) {
     console.log('Compilation failed: ' + error.message);
     console.log('stderr ' + stderr.toString());
