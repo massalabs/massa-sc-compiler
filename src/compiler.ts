@@ -1,11 +1,25 @@
 #!/usr/bin/env node
-import { readFileSync, readdirSync, statSync } from 'fs';
+import { readFileSync, readdirSync, statSync, existsSync } from 'fs';
+import { readFile } from 'fs/promises';
 import { join, basename } from 'path';
 import asc from 'assemblyscript/dist/asc.js';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
+const asconfigPath = './asconfig.json';
+
 async function compile(argv: string[], options: object = {}): Promise<boolean> {
+  // Read the asconfig.json file
+  if (existsSync(asconfigPath)) {
+    const asconfig = JSON.parse(readFileSync(asconfigPath, 'utf8'));
+
+    // Merge the targets and options present in the asconfig file with the options object
+    const target = asconfig.targets[process.env['ASC_ENV'] || 'release'];
+    const targetOpts = Object.assign({}, asconfig.options, target);
+
+    // Merge command-line options with asconfig options
+    options = { ...targetOpts, ...options };
+  }
   const { error, stdout, stderr } = await asc.main(argv, options);
   console.info('contract to compile ' + argv[argv.length - 1]);
   if (error) {
