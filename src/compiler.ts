@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 import { readFileSync, readdirSync, statSync, existsSync } from 'fs';
-import { readFile } from 'fs/promises';
 import { join, basename } from 'path';
 import asc from 'assemblyscript/dist/asc.js';
 import yargs from 'yargs';
@@ -19,6 +18,8 @@ async function compile(argv: string[], options: object = {}): Promise<boolean> {
 
     // Merge command-line options with asconfig options
     options = { ...targetOpts, ...options };
+  } else {
+    console.log('asconfig.json not found, using default options');
   }
   const { error, stdout, stderr } = await asc.main(argv, options);
   console.info('contract to compile ' + argv[argv.length - 1]);
