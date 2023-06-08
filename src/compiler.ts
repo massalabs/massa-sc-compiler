@@ -22,6 +22,13 @@ async function compile(
 
     // Merge command-line options with asconfig options
     options = { ...targetOpts, ...options };
+
+    // // Creating protobuf files if it's in release mode
+    if ((options as any).transformer) {
+      console.log('Creating protobuf files');
+      argv.push('--transform');
+      argv.push((options as any).transformer[0]);
+    }
   } else {
     console.log('asconfig.json not found, using default options');
   }
