@@ -8,20 +8,13 @@ import { APIOptions } from 'assemblyscript/dist/asc.js';
 
 const asconfigPath = './asconfig.json';
 
-type CompilationOptions = APIOptions & {
-  exportRuntime?: boolean;
-  bindings?: string;
-  sourceMap?: boolean;
-  optimizeLevel?: number;
-  shrinkLevel?: number;
-  converge?: boolean;
-  noAssert?: boolean;
+interface CustomAPIOptions extends APIOptions {
   transformer?: string[];
-};
+}
 
 async function compile(
   argv: string[],
-  options: CompilationOptions = {},
+  options: Partial<CustomAPIOptions> = {},
   mode: string,
 ): Promise<boolean> {
   // Read the asconfig.json file
