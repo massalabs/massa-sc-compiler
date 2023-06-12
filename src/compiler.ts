@@ -4,12 +4,24 @@ import { join, basename } from 'path';
 import asc from 'assemblyscript/dist/asc.js';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
+import { APIOptions } from 'assemblyscript/dist/asc.js';
 
 const asconfigPath = './asconfig.json';
 
+type CompilationOptions = APIOptions & {
+  exportRuntime?: boolean;
+  bindings?: string;
+  sourceMap?: boolean;
+  optimizeLevel?: number;
+  shrinkLevel?: number;
+  converge?: boolean;
+  noAssert?: boolean;
+  transformer?: string[];
+};
+
 async function compile(
   argv: string[],
-  options: object = {},
+  options: CompilationOptions = {},
   mode: string,
 ): Promise<boolean> {
   // Read the asconfig.json file
@@ -23,11 +35,11 @@ async function compile(
     // Merge command-line options with asconfig options
     options = { ...targetOpts, ...options };
 
-    // // Creating protobuf files if it's in release mode
-    if ((options as any).transformer) {
-      console.log('Creating protobuf files');
-      argv.push('--transform');
-      argv.push((options as any).transformer[0]);
+    // Creating protobuf files if it's in release mode
+    if (options.transformer) {
+      options.transformer.forEach((transformer) => {
+        argv.push('--transform', transformer);
+      });
     }
   } else {
     console.log('asconfig.json not found, using default options');
