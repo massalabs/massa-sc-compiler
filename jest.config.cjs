@@ -16,4 +16,5 @@ module.exports = {
       useESM: true,
     },
   },
+  testPathIgnorePatterns: ['/node_modules/', '/assembly/'],
 };
