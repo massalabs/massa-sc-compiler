@@ -15,7 +15,7 @@ const dirToCompile = './assembly/contracts';
  * Compiles a file and logs the process and potential errors.
  * @param filePath - The path of the file to compile.
  */
-async function compile(filePath: string): Promise<void> {
+export async function compile(filePath: string): Promise<void> {
   try {
     const { error, stdout, stderr } = await asc.main([
       '-o',
@@ -45,7 +45,10 @@ async function compile(filePath: string): Promise<void> {
  * @param fileList - The list of files found so far.
  * @returns A list of .ts files in the directory.
  */
-function searchDirectory(dir: string, fileList: string[] = []): string[] {
+export function searchDirectory(
+  dir: string,
+  fileList: string[] = [],
+): string[] {
   readdirSync(dir).forEach((file) => {
     const filePath = join(dir, file);
     if (statSync(filePath).isDirectory() && file !== '__tests__') {
@@ -63,7 +66,7 @@ function searchDirectory(dir: string, fileList: string[] = []): string[] {
  * @param subdirectories - Whether to include subdirectories in the search.
  * @returns A list of .ts files in the directory.
  */
-async function getFiles(
+export async function getFiles(
   dirToCompile: string,
   subdirectories: boolean,
 ): Promise<string[]> {
@@ -84,7 +87,9 @@ async function getFiles(
  * @param files - The list of files to categorize.
  * @returns A tuple containing two lists: files without the string and files with the string.
  */
-async function categorizeFiles(files: string[]): Promise<[string[], string[]]> {
+export async function categorizeFiles(
+  files: string[],
+): Promise<[string[], string[]]> {
   const filesWithByteArray: string[] = [];
   const filesWithoutByteArray: string[] = [];
 
@@ -107,7 +112,7 @@ async function categorizeFiles(files: string[]): Promise<[string[], string[]]> {
  * @param dirToCompile - The directory containing the files to compile.
  * @param subdirectories - Whether to include subdirectories in the compilation.
  */
-async function compileAll(
+export async function compileAll(
   dirToCompile: string,
   subdirectories: boolean,
 ): Promise<void> {
@@ -134,7 +139,7 @@ async function compileAll(
   try {
     await yargs(hideBin(process.argv))
       .command('*', 'Compile files in assembly/contracts', {}, async (argv) => {
-        await compileAll(dirToCompile, argv.subdirectories as boolean);
+        await compileAll(dirToCompile, Boolean(argv.subdirectories));
       })
       .option('subdirectories', {
         alias: 'r',
