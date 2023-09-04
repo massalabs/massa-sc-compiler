@@ -8,10 +8,18 @@
         "sourceMap": true,
         "target": "es2022",
         "outDir": "dist",
-        "types": ["node"]
+        "types": [
+            "node",
+            "jest"
+        ]
     },
-    "include": ["src/**/*.ts"],
-    "exclude": ["node_modules"],
+    "include": [
+        "src/**/*.ts"
+    ],
+    "exclude": [
+        "node_modules",
+        "src/**/*.spec.ts"
+    ],
     "experimentalDecorators": true,
     "ts-node": {
         "esm": true,
