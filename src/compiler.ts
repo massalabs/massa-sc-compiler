@@ -1,36 +1,29 @@
 #!/usr/bin/env node
+
+/* eslint-disable no-console */
+
 import { readFileSync, readdirSync, statSync } from 'fs';
 import { join, basename } from 'path';
 import asc from 'assemblyscript/dist/asc.js';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
-async function compile(argv: string[], options: object = {}): Promise<boolean> {
-  const { error, stdout, stderr } = await asc.main(argv, options);
-  console.info('contract to compile ' + argv[argv.length - 1]);
-  if (error) {
-    console.log('Compilation failed: ' + error.message);
-    console.log('stderr ' + stderr.toString());
-    return Promise.resolve(false);
-  } else {
-    console.log(stdout.toString());
-    return Promise.resolve(true);
-  }
-}
-
 const dirToCompile = './assembly/contracts';
 
-/**
- * sort the file: compile deployer contract after
- *
- * @param files - files to sort
- */
-function sortFiles(files: Array<string>): Array<string> {
-  return files.sort((contract) => {
-    return readFileSync(contract, 'utf-8').includes('fileToByteArray(')
-      ? 1
-      : -1;
-  });
+async function compile(filePath: string) {
+  const { error, stdout, stderr } = await asc.main([
+    '-o',
+    join('build', basename(filePath.replace('.ts', '.wasm'))),
+    '-t',
+    join('build', basename(filePath.replace('.ts', '.wat'))),
+    filePath,
+  ]);
+  console.info('contract to compile ' + filePath);
+  if (error) {
+    console.log(stderr.toString());
+    throw new Error(`Error compiling contract ${filePath}: ${error.message}`);
+  }
+  console.log(stdout.toString());
 }
 
 function searchDirectory(dir: string, fileList: string[] = []): string[] {
@@ -45,10 +38,10 @@ function searchDirectory(dir: string, fileList: string[] = []): string[] {
   return fileList;
 }
 
-export async function compileAll(subdirectories: boolean): Promise<boolean> {
+export async function compileAll(subdirectories: boolean) {
   let files: string[];
   if (subdirectories) {
-    files = searchDirectory('./assembly/contracts');
+    files = searchDirectory(dirToCompile);
   } else {
     files = readdirSync(dirToCompile).map((file) => {
       return join(dirToCompile, file);
@@ -57,42 +50,32 @@ export async function compileAll(subdirectories: boolean): Promise<boolean> {
 
   // keep only files ending with `.ts`
   files = files.filter((file) => file.endsWith('.ts'));
-  files = sortFiles(files);
 
   console.log(`${files.length} files to compile`);
 
-  const res = await Promise.all(
-    files.map((file) =>
-      compile([
-        '-o',
-        join(
-          'build',
-          basename(file.replace('.ts', '.wasm')).replace(
-            'assembly/contracts/',
-            '',
-          ),
-        ),
-        '-t',
-        join(
-          'build',
-          basename(file.replace('.ts', '.wat')).replace(
-            'assembly/contracts/',
-            '',
-          ),
-        ),
-        file,
-      ]),
-    ),
+  // first pass compilation with file NOT including "fileToByteArray"
+  await Promise.all(
+    files
+      .filter(
+        (file) => !readFileSync(file, 'utf-8').includes('fileToByteArray('),
+      )
+      .map((file) => compile(file)),
   );
 
-  return res.every((isOk) => isOk);
+  // second pass with the rest of the files
+  await Promise.all(
+    files
+      .filter((file) =>
+        readFileSync(file, 'utf-8').includes('fileToByteArray('),
+      )
+      .map((file) => compile(file)),
+  );
 }
 
 (async () => {
   await yargs(hideBin(process.argv))
     .command('*', 'Compile files in assembly/contracts', {}, async (argv) => {
-      const result = await compileAll(argv.subdirectories as boolean);
-      process.exit(result ? 0 : 1);
+      await compileAll(argv.subdirectories as boolean);
     })
     .option('subdirectories', {
       alias: 'r',

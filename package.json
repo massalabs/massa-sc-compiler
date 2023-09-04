@@ -29,7 +29,7 @@
     "yargs": "^17.7.1"
   },
   "devDependencies": {
-    "@massalabs/eslint-config": "^0.0.9",
+    "@massalabs/eslint-config": "^0.0.10",
     "@massalabs/prettier-config-as": "^0.0.2",
     "@types/yargs": "^17.0.20",
     "husky": "^8.0.3",
