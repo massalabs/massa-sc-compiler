@@ -25,7 +25,8 @@
     "massa-as-compile": "dist/compiler.js"
   },
   "dependencies": {
-    "assemblyscript": "^0.25.2",
+    "@massalabs/as-transformer": "^0.4.0",
+    "assemblyscript": "^0.27.29",
     "yargs": "^17.7.1"
   },
   "devDependencies": {
