@@ -2,7 +2,7 @@
 
 /* eslint-disable no-console */
 
-import { readFileSync, readdirSync, statSync } from 'fs';
+import { readdirSync, statSync } from 'fs';
 import { join, basename } from 'path';
 import asc from 'assemblyscript/dist/asc.js';
 import yargs from 'yargs';
@@ -53,23 +53,7 @@ export async function compileAll(subdirectories: boolean) {
 
   console.log(`${files.length} files to compile`);
 
-  // first pass compilation with file NOT including "fileToByteArray"
-  await Promise.all(
-    files
-      .filter(
-        (file) => !readFileSync(file, 'utf-8').includes('fileToByteArray('),
-      )
-      .map((file) => compile(file)),
-  );
-
-  // second pass with the rest of the files
-  await Promise.all(
-    files
-      .filter((file) =>
-        readFileSync(file, 'utf-8').includes('fileToByteArray('),
-      )
-      .map((file) => compile(file)),
-  );
+  await Promise.all(files.map((file) => compile(file)));
 }
 
 (async () => {
