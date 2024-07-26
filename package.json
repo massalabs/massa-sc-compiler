@@ -15,8 +15,7 @@
     "fmt:check": "npm run prettier && npm run lint",
     "prepare": "husky install"
   },
-  "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "type": "module",
   "files": [
     "dist"
